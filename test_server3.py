@@ -7,6 +7,7 @@ Created on Mon Oct 28 23:22:31 2024
 import unittest
 import socket
 import ipaddress
+import server3
 
 class TestServer3(unittest.TestCase):
 
