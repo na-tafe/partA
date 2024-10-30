@@ -7,7 +7,7 @@ Created on Mon Oct 28 23:22:31 2024
 import unittest
 import socket
 import ipaddress
-import server3
+import server3  # Ensure this points to your server implementation
 
 class TestServer3(unittest.TestCase):
 
@@ -16,19 +16,24 @@ class TestServer3(unittest.TestCase):
         self.server_ip = '127.0.0.1'
         self.server_port = 65432
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind((self.server_ip, self.server_port))
-        self.server_socket.listen(1)
+
+        # Try to bind the socket and handle the error if the address is in use
+        try:
+            self.server_socket.bind((self.server_ip, self.server_port))
+            self.server_socket.listen(1)
+        except OSError as e:
+            self.fail(f"Failed to bind server socket: {e}")
 
     def tearDown(self):
         """Clean up the server socket."""
         self.server_socket.close()
 
     def test_bind(self):
-        # If binding was successful, we don't need to assert anything here.
-        self.assertTrue(True)
+        """Test if the server socket is successfully created and bound."""
+        self.assertTrue(self.server_socket)
 
     def test_accept(self):
-        # Start listening for connections
+        """Test accepting a connection."""
         client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client_socket.connect((self.server_ip, self.server_port))
 
@@ -44,8 +49,8 @@ class TestServer3(unittest.TestCase):
         client_socket.close()
 
     def test_invalid_ip_raises_exception(self):
+        """Test that invalid IP raises a ValueError."""
         invalid_ip = '256.256.256.256'
-        # Check that an invalid IP raises a ValueError
         with self.assertRaises(ValueError):
             ipaddress.ip_address(invalid_ip)
 
